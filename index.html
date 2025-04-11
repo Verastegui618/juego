@@ -153,6 +153,7 @@
             margin-top: 1rem;
         }
         
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -238,6 +239,7 @@
             </form>
         </section>
         
+        <!-- Sección del Juego (inicialmente oculta) -->
         <section id="game-section" class="section">
             <h2>Garbage Collector Game</h2>
             <div id="game-info">
@@ -256,6 +258,7 @@
         </section>
     </div>
     
+    <!-- Modal para resultados -->
     <div id="result-modal" class="modal">
         <div class="modal-content">
             <h2 id="modal-title">Resultado</h2>
@@ -267,6 +270,7 @@
     </div>
     
     <script>
+        // Variables del formulario
         const inscripcionForm = document.getElementById('inscripcion-form');
         const correoInput = document.getElementById('correo');
         const nombreInput = document.getElementById('nombre');
@@ -274,16 +278,19 @@
         const juegoSelect = document.getElementById('juego');
         const pagoInput = document.getElementById('pago');
         
+        // Variables de navegación
         const torneoSection = document.getElementById('torneo-section');
         const gameSection = document.getElementById('game-section');
         const torneoLink = document.getElementById('torneo-link');
         const gameLink = document.getElementById('game-link');
         
+        // Variables del modal
         const resultModal = document.getElementById('result-modal');
         const modalTitle = document.getElementById('modal-title');
         const modalMessage = document.getElementById('modal-message');
         const modalOk = document.getElementById('modal-ok');
         
+        // Variables del juego
         let player;
         let gameContainer;
         let score = 0;
@@ -297,13 +304,14 @@
         const startBtn = document.getElementById('start-btn');
         const backBtn = document.getElementById('back-btn');
         
+        // Precios de los juegos
         const preciosJuegos = {
             'LOL': 50,
             'Fornite': 60,
             'X': 70
         };
         
-       
+        // Manejar navegación
         torneoLink.addEventListener('click', (e) => {
             e.preventDefault();
             torneoSection.style.display = 'block';
@@ -322,24 +330,24 @@
             gameSection.style.display = 'none';
         });
         
-       
+        // Manejar el formulario de inscripción
         inscripcionForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-           
+            // Validar datos
             const correo = correoInput.value.trim();
             const nombre = nombreInput.value.trim();
             const fechaNacimiento = new Date(fechaNacimientoInput.value);
             const juego = juegoSelect.value;
             const pago = parseFloat(pagoInput.value);
             
-           
+            // Validar que todos los campos estén completos
             if (!correo || !nombre || !fechaNacimientoInput.value || !juego || isNaN(pago)) {
                 showModal('Error', 'Por favor complete todos los campos del formulario.');
                 return;
             }
             
-           
+            // Validar edad (mínimo 14 años)
             const hoy = new Date();
             const edadMinima = new Date(
                 hoy.getFullYear() - 14,
@@ -352,7 +360,7 @@
                 return;
             }
             
-            
+            // Validar pago
             const precioJuego = preciosJuegos[juego];
             
             if (pago < precioJuego) {
@@ -361,7 +369,7 @@
                 return;
             }
             
-           
+            // Calcular vuelto si es necesario
             if (pago > precioJuego) {
                 const vuelto = pago - precioJuego;
                 showModal('Inscripción Exitosa', `¡Inscripción completada con éxito!<br><br>Juego: ${juego}<br>Total a pagar: $${precioJuego}<br>Tu cambio: $${vuelto.toFixed(2)}`);
@@ -369,28 +377,28 @@
                 showModal('Inscripción Exitosa', `¡Inscripción completada con éxito!<br><br>Juego: ${juego}<br>Total pagado: $${precioJuego}`);
             }
             
-            
+            // Limpiar formulario
             inscripcionForm.reset();
         });
         
-       
+        // Mostrar modal
         function showModal(title, message) {
             modalTitle.textContent = title;
             modalMessage.innerHTML = message;
             resultModal.style.display = 'flex';
         }
         
-      l
+        // Cerrar modal
         modalOk.addEventListener('click', () => {
             resultModal.style.display = 'none';
         });
         
-       
+        // Inicializar juego
         function initGame() {
             player = document.getElementById('player');
             gameContainer = document.getElementById('game-container');
             
-      
+            // Posición inicial del jugador
             player.style.left = '50%';
             player.style.top = '50%';
             
@@ -402,14 +410,14 @@
             });
             trashItems = [];
             
-        
+            // Reiniciar puntaje y tiempo
             score = 0;
             timeLeft = 60;
             scoreDisplay.textContent = score;
             timeDisplay.textContent = timeLeft;
         }
         
-   
+        // Iniciar juego
         function startGame() {
             if (gameActive) return;
             
@@ -417,17 +425,17 @@
             gameActive = true;
             startBtn.disabled = true;
             
-          
+            // Crear basura
             createTrash(10 + level);
             
             // Iniciar temporizador
             gameInterval = setInterval(updateGame, 1000);
             
-         
+            // Agregar controles
             document.addEventListener('keydown', movePlayer);
         }
         
-       
+        // Crear basura
         function createTrash(count) {
             const containerWidth = gameContainer.offsetWidth;
             const containerHeight = gameContainer.offsetHeight;
@@ -436,6 +444,7 @@
                 const trash = document.createElement('div');
                 trash.className = 'trash';
                 
+                // Posición aleatoria
                 const left = Math.random() * (containerWidth - 30);
                 const top = Math.random() * (containerHeight - 30);
                 
@@ -450,6 +459,7 @@
             }
         }
         
+        // Recoger basura
         function collectTrash(e) {
             if (!gameActive) return;
             
@@ -465,6 +475,7 @@
             }
         }
         
+        // Mover jugador
         function movePlayer(e) {
             if (!gameActive) return;
             
@@ -493,9 +504,11 @@
             player.style.left = `${newLeft}px`;
             player.style.top = `${newTop}px`;
             
+            // Verificar colisiones
             checkCollisions();
         }
         
+        // Verificar colisiones
         function checkCollisions() {
             const playerRect = player.getBoundingClientRect();
             
@@ -521,6 +534,7 @@
             });
         }
         
+        // Actualizar juego
         function updateGame() {
             timeLeft--;
             timeDisplay.textContent = timeLeft;
@@ -530,6 +544,7 @@
             }
         }
         
+        // Terminar juego (tiempo agotado)
         function endGame() {
             gameActive = false;
             clearInterval(gameInterval);
@@ -538,6 +553,7 @@
             startBtn.disabled = false;
         }
         
+        // Completar nivel
         function completeLevel() {
             gameActive = false;
             clearInterval(gameInterval);
@@ -547,8 +563,10 @@
             level++;
         }
         
+        // Evento para iniciar juego
         startBtn.addEventListener('click', startGame);
         
+        // Inicializar navegación
         torneoSection.style.display = 'block';
         gameSection.style.display = 'none';
     </script>
